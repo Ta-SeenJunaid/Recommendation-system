@@ -1,3 +1,4 @@
+import itertools
 
 from surprise import accuracy
 from collections import defaultdict
@@ -99,6 +100,51 @@ class RecommenderMetrics:
                 
                 total += 1
                 
-        return summation / total 
+        return summation / total
+    
+    
+    def user_coverage(top_n_predicted, num_users, rating_threshold=0):
+        hits = 0
+        for user_ID in top_n_predicted.keys():
+            hit = False
+            for movie_ID, predicted_rating in top_n_predicted[user_ID]:
+                if predicted_rating >= rating_threshold:
+                    hit = True
+                    break
+            if hit:
+                hits += 1
+        return hits / num_users
+    
+    
+    def diversity(top_n_predicted, sims_algo):
+        n = 0
+        total = 0
+        sims_matrix = sims_algo.compute_similarities()
+        for user_ID in top_n_predicted.keys():
+            pairs = itertools.combinations(top_n_predicted[user_ID], 2)
+            for pair in pairs:
+                movie1 = pair[0][0]
+                movie2 = pair[1][0]
+                inner_ID1 = sims_algo.trainset.to_inner_iid(str(movie1))
+                inner_ID2 = sims_algo.trainset.to_inner_iid(str(movie2))
+                similarity = sims_matrix[inner_ID1][inner_ID2]
+                total += similarity
+                n += 1
+        s = total / n
+        return (1-s)
+    
+    
+    def novelty(top_n_predicted, rankings):
+        n = 0
+        total = 0
+        for user_ID in top_n_predicted.keys():
+            for rating in top_n_predicted[user_ID]:
+                movie_ID = rating[0]
+                rank = rankings[movie_ID]
+                total += rank
+                n += 1
+        return total / n
+    
+    
     
     
