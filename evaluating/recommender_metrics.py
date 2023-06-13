@@ -14,7 +14,7 @@ class RecommenderMetrics:
         top_n = defaultdict(list)
         
         for user_ID, movie_ID, actual_rating, estimated_rating, _ in predictions:
-            if (estimated_rating >= minimum_rating):
+            if estimated_rating >= minimum_rating:
                 top_n[int(user_ID)].append((int(movie_ID), estimated_rating))
                 
         for user_ID, ratings in top_n.items():
@@ -35,9 +35,70 @@ class RecommenderMetrics:
                 if (int(left_out_movie_ID) == int(movie_ID)):
                     hit = True
                     break
-            if (hit) :
+            if hit:
                 hits += 1
             
             total += 1
         
         return hits/total
+    
+    def cumulative_hit_rate(top_n_predicted, left_out_predictions, rating_cut_off):
+        hits = 0
+        total = 0
+        
+        for user_ID, left_out_movie_ID, actual_rating, \
+        estimated_rating, _ in left_out_predictions:
+            if actual_rating >= rating_cut_off:
+                hit = False
+                for movie_ID, predicted_rating in top_n_predicted[int(user_ID)]:
+                    if int(left_out_movie_ID) == movie_ID:
+                        hit = True
+                        break
+                if hit:
+                    hits += 1
+                total += 1
+        
+        return hits/total
+    
+    
+    def rating_hit_rate(top_n_predicted, left_out_predictions):
+        hits = defaultdict(float)
+        total = defaultdict(float)
+        
+        for user_ID, left_out_movie_ID, actual_rating, \
+            estimated_rating, _ in left_out_predictions:
+                hit = False
+                for movie_ID, predicted_rating in top_n_predicted[int(user_ID)]:
+                    if int(left_out_movie_ID) == movie_ID:
+                        hit = True
+                        break
+                if hit:
+                    hits[actual_rating] += 1
+                
+                total[actual_rating] += 1
+        
+        for rating in sorted(hits.keys()):
+            print(rating, hits[rating] / total[rating])
+            
+    
+    def average_reciprocal_hit_rank(top_n_predicted, left_out_predictions):
+        summation = 0
+        total = 0
+        
+        for user_ID, left_out_movie_ID, actual_rating, \
+            estimated_rating, _ in left_out_predictions:
+                hit_rank = 0
+                rank = 0
+                for movie_ID, predicted_rating in top_n_predicted[int(user_ID)]:
+                    rank = rank + 1
+                    if int(left_out_movie_ID) == movie_ID:
+                        hit_rank = rank 
+                        break
+                if hit_rank > 0:
+                    summation += 1.0 / hit_rank
+                
+                total += 1
+                
+        return summation / total 
+    
+    
