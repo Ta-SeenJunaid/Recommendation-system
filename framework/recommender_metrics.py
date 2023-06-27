@@ -43,7 +43,7 @@ class RecommenderMetrics:
         
         return hits/total
     
-    def cumulative_hit_rate(top_n_predicted, left_out_predictions, rating_cut_off):
+    def cumulative_hit_rate(top_n_predicted, left_out_predictions, rating_cut_off=0):
         hits = 0
         total = 0
         

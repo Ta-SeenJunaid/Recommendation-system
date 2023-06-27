@@ -39,7 +39,7 @@ class EvaluatedAlgorithm:
             metrics["Coverage"] = RecommenderMetrics.user_coverage(top_n_predicted, evaluation_data.get_full_train_set().n_users,
                                                                    rating_threshold=4.0)
             metrics["Diversity"] = RecommenderMetrics.diversity(top_n_predicted, evaluation_data.get_similarities())
-            metrics["Novelty"] = RecommenderMetrics.Novelty(top_n_predicted, 
+            metrics["Novelty"] = RecommenderMetrics.novelty(top_n_predicted, 
                                                             evaluation_data.get_popularity_rankings())
             
         if verbose:
