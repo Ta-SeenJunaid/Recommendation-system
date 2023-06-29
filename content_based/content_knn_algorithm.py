@@ -18,7 +18,7 @@ class ContentKNNAlgorithm(AlgoBase):
         ml = MovieLens()
         genres = ml.get_genres()
         years = ml.get_years()
-        mes = ml.get_mise_en_scene()
+        # mes = ml.get_mise_en_scene()
         
         print("Computing content-based similarity matrix...")
         
@@ -48,7 +48,7 @@ class ContentKNNAlgorithm(AlgoBase):
             y = genres2[i]
             sumxx += x * x
             sumyy += y * y
-            sumxy += x *y
+            sumxy += x * y
             
         return sumxy/math.sqrt(sumxx*sumyy)
     

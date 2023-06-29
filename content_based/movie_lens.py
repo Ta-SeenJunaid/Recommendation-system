@@ -79,7 +79,7 @@ class MovieLens:
         genres = defaultdict(list)
         genreIDs = {}
         max_genreID = 0
-        with open(self.movie_path, newline='', encoding='ISO-8859-1') as csvfile:
+        with open(self.movies_path, newline='', encoding='ISO-8859-1') as csvfile:
             movie_reader = csv.reader(csvfile)
             next(movie_reader)
             for row in movie_reader:
